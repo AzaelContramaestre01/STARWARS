@@ -1,42 +1,57 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			characters: [],
+			planets: [],
+			starships: [],
+			favorites: []
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
+			getcharacters: () => {
+				fetch("https://swapi.dev/api/people/")
+					.then(respuesta => respuesta.json())
+					.then(data => {
+						setStore({
+							characters: data.results
+						});
+					})
+					.catch(error => console.log(error));
 			},
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
+			getplanets: () => {
+				fetch("https://swapi.dev/api/planets/")
+					.then(respuesta => respuesta.json())
+					.then(data => {
+						setStore({
+							planets: data.results
+						});
+					})
+					.catch(error => console.log(error));
 			},
-			changeColor: (index, color) => {
-				//get the store
+			getstarships: () => {
+				fetch("https://swapi.dev/api/starships/")
+					.then(respuesta => respuesta.json())
+					.then(data => {
+						setStore({
+							starships: data.results
+						});
+					})
+					.catch(error => console.log(error));
+			},
+			addFavorites: favorito => {
 				const store = getStore();
-
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
+				const { favorites } = store;
+				favorites.push(favorito);
+				setStore({
+					favorites: favorites
 				});
-
-				//reset the global store
-				setStore({ demo: demo });
+			},
+			deleteFavorites: index => {
+				const store = getStore();
+				const { favorites } = store;
+				favorites.splice(index, 1);
+				setStore({
+					favorites: favorites
+				});
 			}
 		}
 	};
